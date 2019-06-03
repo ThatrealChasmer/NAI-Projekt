@@ -16,9 +16,9 @@ public class ColorController : UnitController
     public float green =0.1f;
     public float blue = 0.1f;
 
-    public float t_red = 0.1f;
-    public float t_green = 0.1f;
-    public float t_blue = 0.1f;
+    public float t_red = 0.5f;
+    public float t_green = 0.5f;
+    public float t_blue = 0.5f;
 
     // Start is called before the first frame update
     void Start()
@@ -34,22 +34,30 @@ public class ColorController : UnitController
 
     private void FixedUpdate()
     {
-        // initialize input and output signal arrays
-        ISignalArray inputArr = box.InputSignalArray;
-        ISignalArray outputArr = box.OutputSignalArray;
+        if (IsRunning)
+        {
+            // initialize input and output signal arrays
+            ISignalArray inputArr = box.InputSignalArray;
+            ISignalArray outputArr = box.OutputSignalArray;
 
-        inputArr[0] = red;
-        inputArr[1] = green;
-        inputArr[2] = blue;
-        inputArr[3] = fitness;
+            inputArr[0] = red;
+            inputArr[1] = green;
+            inputArr[2] = blue;
+            inputArr[3] = fitness;
 
-        distance = Mathf.Sqrt((red - t_red) * (red - t_red) + (green - t_green) * (green - t_green) + (blue - t_blue) * (blue - t_blue));
+            distance = Mathf.Sqrt((red - t_red) * (red - t_red) + (green - t_green) * (green - t_green) + (blue - t_blue) * (blue - t_blue));
 
-        box.Activate();
+            box.Activate();
 
-        if (distance > 0)
-        {//cannot divide by zero and cannot be closer to something than 0
-            AddFitness(Mathf.Abs(1 / distance));
+            red = (float)outputArr[0];
+            green = (float)outputArr[1];
+            blue = (float)outputArr[2];
+
+            if (distance > 0)
+            {//cannot divide by zero and cannot be closer to something than 0
+                AddFitness(Mathf.Abs(1 / distance));
+            }
+            ChangeColor(red, green, blue);
         }
     }
 
