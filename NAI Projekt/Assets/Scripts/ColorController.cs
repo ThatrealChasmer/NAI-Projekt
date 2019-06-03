@@ -80,4 +80,13 @@ public class ColorController : UnitController
     {
         this.IsRunning = false;
     }
+
+    void ChangeColor(float r, float g, float b)
+    {
+        color.r = r;
+        color.g = g;
+        color.b = b;
+
+        this.gameObject.GetComponent<SpriteRenderer>().color = color;
+    }
 }
