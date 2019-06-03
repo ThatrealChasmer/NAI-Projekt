@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   population: 50
-  Trials: 10000
+  Trials: 1
   TrialDuration: 1
   StoppingFitness: 0
   Unit: {fileID: 2948400895569660292, guid: 92760ef7f3943d74686031d19dfb3f29, type: 3}
