@@ -16,6 +16,7 @@ public class Optimizer : MonoBehaviour {
     //set the number of outputs we plan to use
     const int NUM_OUTPUTS = 3;
 
+    public int population;
     public int Trials;//number of trials for each generation
     public float TrialDuration;//how long a trial lasts
     public float StoppingFitness;//at what fitness should we max out at
@@ -44,6 +45,7 @@ public class Optimizer : MonoBehaviour {
     public bool showDebugger = false;//toggle debug logger
     public float timeScale;//used for setting or monitoring the current timescale
     public string trainedObjectName = "bob";//name of file to use / create
+    public Vector3 coords = new Vector3(-7, 4, 0);
 
 
     // Use this for initialization
@@ -107,13 +109,13 @@ public class Optimizer : MonoBehaviour {
         }
 
         //make sure we don't save more than once if the frames are still running and our generation has not updated yet
-        if(isSaved && ((Generation - 1) % 50 == 0))
+        if(isSaved && ((Generation - 1) % population == 0))
         {
             isSaved = false;
         }
 
         //autosave
-        if (EARunning && (Generation % 50 == 0) && !isSaved)
+        if (EARunning && (Generation % population == 0) && !isSaved)
         {
             Save();
             isSaved = true;
@@ -226,7 +228,16 @@ public class Optimizer : MonoBehaviour {
 
     public void Evaluate(IBlackBox box)
     {
-        GameObject obj = Instantiate(Unit, Unit.transform.position, Unit.transform.rotation) as GameObject;
+        GameObject obj = Instantiate(Unit, coords, Unit.transform.rotation) as GameObject;
+        if(coords.x < 8)
+        {
+            coords.x++;
+        }
+        else
+        {
+            coords.x = -7;
+            coords.y--;
+        }
         UnitController controller = obj.GetComponent<UnitController>();
 
         ControllerMap.Add(box, controller);
@@ -237,7 +248,7 @@ public class Optimizer : MonoBehaviour {
     public void StopEvaluation(IBlackBox box)
     {
         UnitController ct = ControllerMap[box];
-
+        coords = new Vector3(-7, 4, 0);
         Destroy(ct.gameObject);
     }
 
