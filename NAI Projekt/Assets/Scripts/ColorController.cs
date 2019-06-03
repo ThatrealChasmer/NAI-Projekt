@@ -6,14 +6,19 @@ using UnityEngine;
 public class ColorController : UnitController
 {
     public Color color;
-    private bool isRunning;
+    private bool IsRunning;
     private IBlackBox box;
 
     public float fitness;
+    public float distance;
 
-    public int red;
-    public int green;
-    public int blue;
+    public float red = 0.1f;
+    public float green =0.1f;
+    public float blue = 0.1f;
+
+    public float t_red = 0.1f;
+    public float t_green = 0.1f;
+    public float t_blue = 0.1f;
 
     // Start is called before the first frame update
     void Start()
@@ -27,18 +32,52 @@ public class ColorController : UnitController
         
     }
 
+    private void FixedUpdate()
+    {
+        // initialize input and output signal arrays
+        ISignalArray inputArr = box.InputSignalArray;
+        ISignalArray outputArr = box.OutputSignalArray;
+
+        inputArr[0] = red;
+        inputArr[1] = green;
+        inputArr[2] = blue;
+        inputArr[3] = fitness;
+
+        distance = Mathf.Sqrt((red - t_red) * (red - t_red) + (green - t_green) * (green - t_green) + (blue - t_blue) * (blue - t_blue));
+
+        box.Activate();
+
+        if (distance > 0)
+        {//cannot divide by zero and cannot be closer to something than 0
+            AddFitness(Mathf.Abs(1 / distance));
+        }
+    }
+
+    void AddFitness(float fit)
+    {
+        //increment our fitness score on every frame by the fit value
+        fitness += fit;
+    }
+
     public override void Activate(IBlackBox box)
     {
-        throw new System.NotImplementedException();
+        this.box = box;
+        this.IsRunning = true;
     }
 
     public override float GetFitness()
     {
-        throw new System.NotImplementedException();
+        var fit = fitness;//cache the fitness value
+        fitness = 0;//reset fitness value each time we start a new training cycle
+
+        if (fit < 0)
+            fit = 0;
+
+        return fit;
     }
 
     public override void Stop()
     {
-        throw new System.NotImplementedException();
+        this.IsRunning = false;
     }
 }
