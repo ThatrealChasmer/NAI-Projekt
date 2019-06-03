@@ -11,10 +11,10 @@ using System.IO;
 public class Optimizer : MonoBehaviour {
 
     //set the number of inputs we are going to use in this Neural Net
-    const int NUM_INPUTS = 3;
+    const int NUM_INPUTS = 4;
 
     //set the number of outputs we plan to use
-    const int NUM_OUTPUTS = 5;
+    const int NUM_OUTPUTS = 3;
 
     public int Trials;//number of trials for each generation
     public float TrialDuration;//how long a trial lasts
@@ -36,7 +36,6 @@ public class Optimizer : MonoBehaviour {
     SimpleExperiment experiment;
     static NeatEvolutionAlgorithm<NeatGenome> _ea;
 
-    public GameObject Target;//the target we want our bobbers chasing
     public GameObject Unit;//the smart object
     public float distaceTargetAllowed = 1;//the closest we can get to target until we stop travelling towards it
     public bool doTrain = true;//toggle the start and stop training buttons
@@ -123,8 +122,6 @@ public class Optimizer : MonoBehaviour {
 
     public void StartEA()
     {
-        //update the location of the Target
-        Target.transform.position = new Vector3(UnityEngine.Random.Range(-distaceTargetAllowed, distaceTargetAllowed), Target.transform.position.y, UnityEngine.Random.Range(-distaceTargetAllowed, distaceTargetAllowed));
         if (Utility.DebugLog)
         {
             Utility.Log("Starting PhotoTaxis experiment");
@@ -149,8 +146,6 @@ public class Optimizer : MonoBehaviour {
 
     void ea_UpdateEvent(object sender, EventArgs e)
     {
-        //update the location of the Target
-        Target.transform.position = new Vector3(UnityEngine.Random.Range(-distaceTargetAllowed, distaceTargetAllowed), Target.transform.position.y, UnityEngine.Random.Range(-distaceTargetAllowed, distaceTargetAllowed));
         if (Utility.DebugLog)
         {
             Utility.Log(string.Format("gen={0:N0} bestFitness={1:N6}",
@@ -290,8 +285,6 @@ public class Optimizer : MonoBehaviour {
 
     public float GetFitness(IBlackBox box)
     {
-        //update the location of the Target
-        Target.transform.position = new Vector3(UnityEngine.Random.Range(-distaceTargetAllowed, distaceTargetAllowed), Target.transform.position.y, UnityEngine.Random.Range(-distaceTargetAllowed, distaceTargetAllowed));
         if (ControllerMap.ContainsKey(box))
         {
             return ControllerMap[box].GetFitness();
