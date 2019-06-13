@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using SharpNeat.Phenomes;
 using System.Collections.Generic;
 using SharpNeat.EvolutionAlgorithms;
@@ -11,10 +10,10 @@ using System.IO;
 public class Optimizer : MonoBehaviour {
 
     //set the number of inputs we are going to use in this Neural Net
-    const int NUM_INPUTS = 4;
+    const int NUM_INPUTS = 3;
 
     //set the number of outputs we plan to use
-    const int NUM_OUTPUTS = 3;
+    const int NUM_OUTPUTS = 2;
 
     public int population;
     public int Trials;//number of trials for each generation
@@ -38,6 +37,8 @@ public class Optimizer : MonoBehaviour {
     static NeatEvolutionAlgorithm<NeatGenome> _ea;
 
     public GameObject Unit;//the smart object
+    public GameObject Target;
+    public bool targetCreated = false;
     public float distaceTargetAllowed = 1;//the closest we can get to target until we stop travelling towards it
     public bool doTrain = true;//toggle the start and stop training buttons
     public bool canThrottleFPS = false;//toggle whether or not the system can adjust the FPS to get more than the fpsMin frames at a lower timescale
@@ -45,7 +46,6 @@ public class Optimizer : MonoBehaviour {
     public bool showDebugger = false;//toggle debug logger
     public float timeScale;//used for setting or monitoring the current timescale
     public string trainedObjectName = "bob";//name of file to use / create
-    public Vector3 coords = new Vector3(-7, 4, 0);
 
 
     // Use this for initialization
@@ -228,17 +228,15 @@ public class Optimizer : MonoBehaviour {
 
     public void Evaluate(IBlackBox box)
     {
-        GameObject obj = Instantiate(Unit, coords, Unit.transform.rotation) as GameObject;
-        if(coords.x < 8)
+        
+        GameObject tar;
+        if(targetCreated == false)
         {
-            coords.x++;
+            tar = Instantiate(Target, new Vector3(8.5f, 3, 0), Quaternion.identity);
+            targetCreated = true;
         }
-        else
-        {
-            coords.x = -7;
-            coords.y--;
-        }
-        UnitController controller = obj.GetComponent<UnitController>();
+        GameObject obj = Instantiate(Unit, Unit.transform.position, Unit.transform.rotation) as GameObject;
+        UnitController controller = obj.transform.GetChild(0).GetComponent<UnitController>();
 
         ControllerMap.Add(box, controller);
 
@@ -248,7 +246,14 @@ public class Optimizer : MonoBehaviour {
     public void StopEvaluation(IBlackBox box)
     {
         UnitController ct = ControllerMap[box];
-        coords = new Vector3(-7, 4, 0);
+
+        Destroy(GameObject.FindGameObjectWithTag("Target"));
+        targetCreated = false;
+        GameObject[] arrows = GameObject.FindGameObjectsWithTag("Arrow");
+        foreach(GameObject a in arrows)
+        {
+            Destroy(a);
+        }
         Destroy(ct.gameObject);
     }
 
